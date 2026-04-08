@@ -3,8 +3,6 @@
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useRef } from "react";
 
 const portfolioItems = [
   { title: "Indoor Unit Spa", note: "Deep foam cleaning & disinfection", image: "/1.jpeg" },
@@ -16,24 +14,12 @@ const portfolioItems = [
 ];
 
 export default function Portfolio() {
-  const sliderRef = useRef(null);
-
-  const slide = (dir) => {
-    if (!sliderRef.current) return;
-    const width = sliderRef.current.clientWidth;
-
-    sliderRef.current.scrollBy({
-      left: dir === "left" ? -width : width,
-      behavior: "smooth",
-    });
-  };
-
   return (
-    <section id="portfolio" className="py-24 relative overflow-hidden">
+    <section id="portfolio" className="pt-24 pb-12 md:pt-32 md:pb-16 lg:pb-24 relative overflow-hidden">
       <div className="container mx-auto px-4 max-w-6xl">
 
         {/* Heading */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-8 md:mb-12 lg:mb-16 px-4">
           <Badge
             variant="outline"
             className="mb-4 rounded-full px-4 py-1 border-primary/30 text-primary bg-primary/5"
@@ -41,41 +27,16 @@ export default function Portfolio() {
             Gallery
           </Badge>
 
-          <h2 className="text-4xl font-bold mb-4">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 md:mb-4">
             Work in Action
           </h2>
 
-          <p className="text-muted-foreground max-w-xl mx-auto">
+          <p className="mx-auto max-w-xl text-sm text-muted-foreground sm:text-base">
             Clean workmanship is our signature. Here is what we do best.
           </p>
         </div>
 
-        {/* Mobile arrows */}
-        <div className="flex justify-between mb-4 sm:hidden">
-          <button
-            onClick={() => slide("left")}
-            className="p-2 rounded-full bg-muted hover:bg-primary/10 transition"
-          >
-            <ChevronLeft />
-          </button>
-
-          <button
-            onClick={() => slide("right")}
-            className="p-2 rounded-full bg-muted hover:bg-primary/10 transition"
-          >
-            <ChevronRight />
-          </button>
-        </div>
-
-        {/* Slider (mobile) / Grid (desktop) */}
-        <div
-          ref={sliderRef}
-          className="
-            flex gap-4 overflow-x-auto snap-x snap-mandatory hide-scrollbar
-            sm:grid sm:grid-cols-2 lg:grid-cols-3
-            sm:overflow-visible
-          "
-        >
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {portfolioItems.map((it, idx) => (
             <motion.div
               key={it.title}
@@ -83,7 +44,6 @@ export default function Portfolio() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: idx * 0.05 }}
-              className="min-w-[280px] snap-center sm:min-w-0"
             >
               <Card className="group relative overflow-hidden rounded-[2rem] border-none shadow-md hover:shadow-xl transition-all duration-300">
 
