@@ -1,125 +1,204 @@
-import Link from "next/link";
-import { business, faqs } from "@/lib/data";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+"use client";
+
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { faqs } from "@/lib/data";
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Phone, MessageCircle, HelpCircle, ShieldCheck } from "lucide-react";
+  HelpCircle, ShieldCheck, ChevronDown,
+  Star, Clock3, Wrench, CircleCheck,
+} from "lucide-react";
+
+
+const trustPoints = [
+  "Transparent estimate before any work begins",
+  "OEM & genuine spare parts guaranteed",
+  "Brand-trained technicians on every visit",
+  "6-month warranty on all repairs",
+  "Same-day service available",
+];
+
+const tagColors = {
+  Booking:  "hsl(var(--primary) / 0.12)",
+  Coverage: "hsl(160 60% 40% / 0.12)",
+  Pricing:  "hsl(45 80% 50% / 0.12)",
+  Warranty: "hsl(140 55% 40% / 0.12)",
+  Service:  "hsl(220 70% 55% / 0.12)",
+  Timeline: "hsl(30 70% 50% / 0.12)",
+  Parts:    "hsl(280 55% 55% / 0.12)",
+  Location: "hsl(190 60% 45% / 0.12)",
+};
 
 export default function FAQ() {
+  const [openIndex, setOpenIndex] = useState(0);
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    "mainEntity": faqs.map((f) => ({
+    mainEntity: faqs.map((f) => ({
       "@type": "Question",
-      "name": f.q,
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": f.a,
-      },
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
     })),
   };
 
-  const phoneHref = `tel:${business.phone.replace(/[^\d+]/g, "")}`;
-  const whatsappHref = `https://wa.me/${business.whatsapp.replace(/\D/g, "")}`;
+  const toggle = (i) => setOpenIndex((prev) => (prev === i ? null : i));
 
   return (
     <section
       id="faq"
-      className="relative w-full overflow-hidden bg-gradient-to-b from-transparent via-muted/10 to-transparent px-4 py-14 md:px-8 md:py-18 lg:py-24"
+      className="relative w-full overflow-hidden bg-gradient-to-b from-transparent via-muted/10 to-transparent py-20 lg:py-28"
     >
-      <div className="pointer-events-none absolute inset-0 [background:radial-gradient(circle_at_18%_0%,hsl(var(--primary)/0.08),transparent_35%)]" />
+      {/* JSON-LD */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <div className="relative mx-auto max-w-7xl">
-        <div className="grid items-start gap-10 lg:grid-cols-12 lg:gap-10">
-          <div className="lg:col-span-4">
-            <div className="lg:sticky lg:top-10 flex flex-col gap-6">
-              <div>
-                <Badge
-                  variant="outline"
-                  className="mb-4 rounded-full border-primary/20 bg-primary/5 px-4 py-1 text-primary"
-                >
-                  <HelpCircle className="mr-2 h-3.5 w-3.5" /> FAQ
-                </Badge>
-                <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl md:text-5xl lg:text-4xl">
-                  Frequently Asked <br className="hidden lg:block" /> Questions
-                </h2>
-                <p className="mt-4 max-w-md text-base leading-relaxed text-muted-foreground sm:text-lg">
-                  Everything you need to know about our repair services, billing, and warranty.
-                </p>
-              </div>
+      {/* Ambient radial glow */}
+      <div className="pointer-events-none absolute inset-0 [background:radial-gradient(ellipse_at_20%_0%,hsl(var(--primary)/0.07),transparent_45%)]" />
+      <div className="pointer-events-none absolute inset-0 [background:radial-gradient(ellipse_at_80%_100%,hsl(var(--primary)/0.05),transparent_40%)]" />
 
-              <div className="space-y-3 rounded-2xl border bg-card/80 p-6 shadow-sm">
-                <p className="text-base font-semibold text-foreground">Why customers trust our process</p>
-                <div className="space-y-2.5 text-sm text-muted-foreground sm:text-base">
-                  <p className="flex items-start gap-2">
-                    <ShieldCheck className="mt-0.5 h-4 w-4 text-primary" />
-                    Clear estimates before work starts
-                  </p>
-                  <p className="flex items-start gap-2">
-                    <ShieldCheck className="mt-0.5 h-4 w-4 text-primary" />
-                    Brand-trained technicians and genuine parts
-                  </p>
-                  <p className="flex items-start gap-2">
-                    <ShieldCheck className="mt-0.5 h-4 w-4 text-primary" />
-                    Support available if you need post-service help
-                  </p>
-                </div>
-              </div>
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-8 lg:px-14">
 
-              <div className="rounded-2xl border bg-card p-6 shadow-sm">
-                <h3 className="font-semibold text-foreground">Can&apos;t find the answer?</h3>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  We are here to help. Chat with our team directly.
-                </p>
-                <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-1">
-                  <Button className="w-full gap-2 rounded-full" variant="default" asChild>
-                    <Link href={phoneHref}>
-                      <Phone className="h-4 w-4" /> Call Now
-                    </Link>
-                  </Button>
-                  <Button className="w-full gap-2 rounded-full" variant="outline" asChild>
-                    <Link href={whatsappHref} target="_blank" rel="noreferrer">
-                      <MessageCircle className="h-4 w-4" /> WhatsApp Us
-                    </Link>
-                  </Button>
-                </div>
+        {/* ══ Header ══ */}
+        <div className="mx-auto mb-12 max-w-2xl text-center">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-widest text-primary">
+            <HelpCircle className="h-3.5 w-3.5" />
+            Customer Questions
+          </div>
+          <h2 className="text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl">
+            Frequently{" "}
+            <span className="text-primary">Asked</span>{" "}
+            Questions
+          </h2>
+          <p className="mt-4 text-base leading-relaxed text-muted-foreground">
+            Honest answers about our repair process, pricing, warranty and service area.
+          </p>
+        </div>
+
+      
+
+        {/* ══ Two-col layout ══ */}
+        <div className="grid items-start gap-10 lg:grid-cols-[1fr_1.7fr]">
+
+          {/* ── Left: sticky trust panel ── */}
+          <div className="flex flex-col gap-5 lg:sticky lg:top-24">
+
+            {/* Headline */}
+            <div>
+              <div className="mb-1.5 inline-flex items-center gap-1.5 rounded-full bg-primary/8 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-primary">
+                <ShieldCheck className="h-3 w-3" /> Why Trust Us
               </div>
+              <h3 className="mt-1 text-2xl font-bold leading-snug text-foreground">
+                Honest.{" "}
+                <span className="text-primary">Skilled.</span>{" "}
+                Accountable.
+              </h3>
+              <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                Built on transparent communication and quality repairs in Jhumri Telaiya — not shortcuts.
+              </p>
             </div>
+
+            {/* Checklist card */}
+            <div className="rounded-2xl border border-primary/12 bg-primary/[0.03] p-5">
+              <ul className="space-y-3">
+                {trustPoints.map((pt) => (
+                  <li key={pt} className="flex items-start gap-3">
+                    <CircleCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                    <span className="text-sm leading-5 text-muted-foreground">{pt}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            
           </div>
 
-          <div className="lg:col-span-8">
-            <div className="rounded-3xl border bg-card/70 p-3 shadow-sm sm:p-4">
-              <Accordion type="single" collapsible defaultValue="item-0" className="flex flex-col gap-3">
-                {faqs.map((f, index) => (
-                  <AccordionItem
-                    key={index}
-                    value={`item-${index}`}
-                    className="rounded-2xl border bg-background px-4 sm:px-6 transition-all hover:border-primary/40 data-[state=open]:border-primary data-[state=open]:bg-muted/10 data-[state=open]:shadow-sm"
+          {/* ── Right: Accordion ── */}
+          <div className="flex flex-col gap-2.5">
+            {faqs.map((f, i) => {
+              const isOpen = openIndex === i;
+              return (
+                <motion.div
+                  key={i}
+                  layout
+                  className={`overflow-hidden rounded-2xl border transition-all duration-300 ${
+                    isOpen
+                      ? "border-primary/40 bg-primary/[0.04] shadow-sm"
+                      : "border-border/60 bg-card hover:border-primary/20 hover:bg-primary/[0.02]"
+                  }`}
+                >
+                  {/* Trigger */}
+                  <button
+                    onClick={() => toggle(i)}
+                    className="flex w-full items-center gap-4 px-5 py-5 text-left"
+                    aria-expanded={isOpen}
                   >
-                    <AccordionTrigger className="py-6 text-left hover:no-underline [&[data-state=open]]:text-primary">
-                      <div className="flex items-start gap-3">
-                        <span className="mt-0.5 inline-flex h-8 min-w-8 items-center justify-center rounded-full border border-primary/20 bg-primary/5 px-2 text-xs font-semibold text-primary">
-                          {String(index + 1).padStart(2, "0")}
+                    {/* Number bubble */}
+                    <span
+                      className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-[11px] font-bold transition-all duration-300 ${
+                        isOpen
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-primary/8 text-primary"
+                      }`}
+                    >
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+
+                    <div className="flex flex-1 flex-col gap-1 min-w-0">
+                      {/* Tag */}
+                      {f.tag && (
+                        <span
+                          className="w-fit rounded-full border border-primary/15 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-primary"
+                          style={{ background: tagColors[f.tag] ?? "hsl(var(--primary)/0.08)" }}
+                        >
+                          {f.tag}
                         </span>
-                        <span className="text-lg font-medium leading-snug">{f.q}</span>
-                      </div>
-                    </AccordionTrigger>
-                    <AccordionContent className="pb-6 pl-11 text-base leading-relaxed text-muted-foreground">
-                      <p>{f.a}</p>
-                    </AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion>
-            </div>
+                      )}
+                      {/* Question */}
+                      <span
+                        className={`text-[15px] font-semibold leading-snug transition-colors duration-200 ${
+                          isOpen ? "text-foreground" : "text-muted-foreground"
+                        }`}
+                      >
+                        {f.q}
+                      </span>
+                    </div>
+
+                    {/* Chevron */}
+                    <motion.div
+                      animate={{ rotate: isOpen ? 180 : 0 }}
+                      transition={{ duration: 0.25, ease: "easeInOut" }}
+                      className="shrink-0"
+                    >
+                      <ChevronDown
+                        className={`h-5 w-5 transition-colors duration-200 ${
+                          isOpen ? "text-primary" : "text-muted-foreground/50"
+                        }`}
+                      />
+                    </motion.div>
+                  </button>
+
+                  {/* Animated answer */}
+                  <AnimatePresence initial={false}>
+                    {isOpen && (
+                      <motion.div
+                        key="answer"
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+                        style={{ overflow: "hidden" }}
+                      >
+                        <div className="px-5 pb-5 pl-16 text-sm leading-7 text-muted-foreground">
+                          {f.a}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </div>

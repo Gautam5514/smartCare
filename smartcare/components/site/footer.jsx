@@ -17,8 +17,8 @@ const emailHref = `mailto:${business.email}`;
 const quickLinks = [
   { label: "Home", href: "/" },
   { label: "Services", href: "/services" },
-  { label: "My Work", href: "/work" },
-  { label: "Portfolio", href: "/portfolio" },
+  { label: "About Us", href: "/about" },
+  { label: "Blogs", href: "/blogs" },
   { label: "Contact", href: "/contact" },
 ];
 
@@ -56,6 +56,24 @@ const trust = [
 const ACCENT = "oklch(0.65 0.18 210)";
 const ACCENT2 = "oklch(0.58 0.19 250)";
 
+function FooterLink({ href, label }) {
+  return (
+    <li>
+      <Link
+        href={href}
+        className="group flex items-center gap-1.5 text-sm transition-all duration-200"
+        style={{ color: "oklch(0.62 0.04 240)" }}
+      >
+        <ChevronRight
+          className="h-3 w-3 opacity-0 -translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
+          style={{ color: ACCENT }}
+        />
+        <span className="group-hover:text-white transition-colors duration-200">{label}</span>
+      </Link>
+    </li>
+  );
+}
+
 export default function Footer() {
   const year = new Date().getFullYear();
 
@@ -84,11 +102,11 @@ export default function Footer() {
         className="border-b"
         style={{ borderColor: "oklch(0.65 0.18 210 / 0.10)" }}
       >
-        <div className="mx-auto max-w-7xl px-5 py-6 sm:px-8 lg:px-14">
-          <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mx-auto max-w-7xl px-4 py-5 sm:px-8 lg:px-14">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 
-            {/* Trust pills */}
-            <div className="flex flex-wrap gap-2.5">
+            {/* Trust pills — 2×2 grid on mobile */}
+            <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:gap-2.5">
               {trust.map((t) => (
                 <div
                   key={t.label}
@@ -105,30 +123,30 @@ export default function Footer() {
               ))}
             </div>
 
-            {/* Quick contact */}
-            <div className="flex flex-wrap gap-2.5">
+            {/* Quick contact — full width buttons on mobile */}
+            <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:gap-2.5">
               <a
                 href={phoneHref}
-                className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold text-white transition-all duration-300 hover:scale-[1.04]"
+                className="inline-flex items-center justify-center gap-2 rounded-full px-4 py-2.5 text-xs font-bold text-white transition-all duration-300 active:scale-95 hover:scale-[1.04]"
                 style={{
                   background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT2})`,
                   boxShadow: `0 0 16px oklch(0.55 0.18 250 / 0.35)`,
                 }}
               >
-                <Phone className="h-3.5 w-3.5" /> {business.phone}
+                <Phone className="h-3.5 w-3.5 shrink-0" /> {business.phone}
               </a>
               <a
                 href={whatsappHref}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-semibold transition-all duration-300 hover:scale-[1.04]"
+                className="inline-flex items-center justify-center gap-2 rounded-full border px-4 py-2.5 text-xs font-semibold transition-all duration-300 active:scale-95 hover:scale-[1.04]"
                 style={{
                   borderColor: "oklch(0.65 0.18 210 / 0.25)",
                   color: "oklch(0.75 0.06 240)",
                   background: "oklch(0.65 0.18 210 / 0.06)",
                 }}
               >
-                <MessageCircle className="h-3.5 w-3.5" /> WhatsApp
+                <MessageCircle className="h-3.5 w-3.5 shrink-0" /> WhatsApp
               </a>
             </div>
           </div>
@@ -138,8 +156,8 @@ export default function Footer() {
       {/* ════════════════════════════
           MAIN FOOTER BODY
       ════════════════════════════ */}
-      <div className="mx-auto max-w-7xl px-5 py-14 sm:px-8 lg:px-14">
-        <div className="grid gap-12 lg:grid-cols-[2fr_1fr_1fr_1fr]">
+      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-8 lg:px-14">
+        <div className="flex flex-col gap-10 lg:grid lg:grid-cols-[2fr_1fr_1fr_1fr] lg:gap-12">
 
           {/* ── Column 1: Brand ── */}
           <div>
@@ -186,7 +204,7 @@ export default function Footer() {
                   key={s.label}
                   href={s.href}
                   aria-label={s.label}
-                  className="group flex h-9 w-9 items-center justify-center rounded-2xl border transition-all duration-300 hover:scale-110"
+                  className="group flex h-10 w-10 items-center justify-center rounded-2xl border transition-all duration-300 hover:scale-110 active:scale-95"
                   style={{
                     borderColor: "oklch(0.98 0 0 / 0.10)",
                     background: "oklch(0.98 0 0 / 0.04)",
@@ -203,101 +221,99 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* ── Column 2: Quick Links ── */}
-          <div>
-            <p
-              className="mb-5 text-[10px] font-extrabold uppercase tracking-[0.15em]"
-              style={{ color: ACCENT }}
-            >
-              Company
-            </p>
-            <ul className="space-y-2.5">
-              {quickLinks.map((l) => (
-                <li key={l.href}>
-                  <Link
-                    href={l.href}
-                    className="group flex items-center gap-1.5 text-sm transition-all duration-200"
-                    style={{ color: "oklch(0.62 0.04 240)" }}
-                  >
-                    <ChevronRight
-                      className="h-3 w-3 opacity-0 -translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
-                      style={{ color: ACCENT }}
-                    />
-                    <span className="group-hover:text-white transition-colors duration-200">{l.label}</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {/* ── Columns 2-4: Links — 3-col grid on mobile/tablet, inline on desktop ── */}
+          <div className="grid grid-cols-3 gap-6 lg:contents">
 
-          {/* ── Column 3: Services ── */}
-          <div>
-            <p
-              className="mb-5 text-[10px] font-extrabold uppercase tracking-[0.15em]"
-              style={{ color: ACCENT }}
-            >
-              Services
-            </p>
-            <ul className="space-y-2.5">
-              {serviceLinks.map((l) => (
-                <li key={l.label}>
-                  <Link
-                    href={l.href}
-                    className="group flex items-center gap-1.5 text-sm transition-all duration-200"
-                    style={{ color: "oklch(0.62 0.04 240)" }}
-                  >
-                    <ChevronRight
-                      className="h-3 w-3 opacity-0 -translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
-                      style={{ color: ACCENT }}
-                    />
-                    <span className="group-hover:text-white transition-colors duration-200">{l.label}</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* ── Column 4: Legal + Newsletter ── */}
-          <div>
-            <p
-              className="mb-5 text-[10px] font-extrabold uppercase tracking-[0.15em]"
-              style={{ color: ACCENT }}
-            >
-              Legal
-            </p>
-            <ul className="space-y-2.5">
-              {legalLinks.map((l) => (
-                <li key={l.label}>
-                  <Link
-                    href={l.href}
-                    className="group flex items-center gap-1.5 text-sm transition-all duration-200"
-                    style={{ color: "oklch(0.62 0.04 240)" }}
-                  >
-                    <ChevronRight
-                      className="h-3 w-3 opacity-0 -translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
-                      style={{ color: ACCENT }}
-                    />
-                    <span className="group-hover:text-white transition-colors duration-200">{l.label}</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-
-            {/* Quick Book card */}
-            <div
-              className="mt-8 rounded-2xl border p-4"
-              style={{
-                borderColor: "oklch(0.65 0.18 210 / 0.18)",
-                background: "oklch(0.65 0.18 210 / 0.06)",
-              }}
-            >
-              <p className="text-xs font-bold text-white">Same-Day Booking</p>
-              <p className="mt-0.5 text-[10px]" style={{ color: "oklch(0.58 0.04 240)" }}>
-                Mon – Sat · 8 AM – 9 PM
+            {/* Column 2: Quick Links */}
+            <div>
+              <p
+                className="mb-4 text-[10px] font-extrabold uppercase tracking-[0.15em]"
+                style={{ color: ACCENT }}
+              >
+                Company
               </p>
+              <ul className="space-y-2.5">
+                {quickLinks.map((l) => (
+                  <FooterLink key={l.href} href={l.href} label={l.label} />
+                ))}
+              </ul>
+            </div>
+
+            {/* Column 3: Services */}
+            <div>
+              <p
+                className="mb-4 text-[10px] font-extrabold uppercase tracking-[0.15em]"
+                style={{ color: ACCENT }}
+              >
+                Services
+              </p>
+              <ul className="space-y-2.5">
+                {serviceLinks.map((l) => (
+                  <FooterLink key={l.label} href={l.href} label={l.label} />
+                ))}
+              </ul>
+            </div>
+
+            {/* Column 4: Legal + Quick Book card */}
+            <div className="flex flex-col gap-6">
+              <div>
+                <p
+                  className="mb-4 text-[10px] font-extrabold uppercase tracking-[0.15em]"
+                  style={{ color: ACCENT }}
+                >
+                  Legal
+                </p>
+                <ul className="space-y-2.5">
+                  {legalLinks.map((l) => (
+                    <FooterLink key={l.label} href={l.href} label={l.label} />
+                  ))}
+                </ul>
+              </div>
+
+              {/* Quick Book card — inside col 4 on desktop */}
+              <div
+                className="hidden lg:block rounded-2xl border p-4"
+                style={{
+                  borderColor: "oklch(0.65 0.18 210 / 0.18)",
+                  background: "oklch(0.65 0.18 210 / 0.06)",
+                }}
+              >
+                <p className="text-xs font-bold text-white">Same-Day Booking</p>
+                <p className="mt-0.5 text-[10px]" style={{ color: "oklch(0.58 0.04 240)" }}>
+                  Mon – Sat · 8 AM – 9 PM
+                </p>
+                <a
+                  href={phoneHref}
+                  className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-xl py-2.5 text-xs font-bold text-white transition-all duration-300 hover:scale-[1.02] active:scale-95"
+                  style={{
+                    background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT2})`,
+                    boxShadow: `0 0 12px oklch(0.55 0.18 250 / 0.30)`,
+                  }}
+                >
+                  <Phone className="h-3 w-3" /> Call Now
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* ── Quick Book card — full width on mobile/tablet only ── */}
+          <div
+            className="block lg:hidden rounded-2xl border p-4"
+            style={{
+              borderColor: "oklch(0.65 0.18 210 / 0.18)",
+              background: "oklch(0.65 0.18 210 / 0.06)",
+            }}
+          >
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-xs font-bold text-white">Same-Day Booking</p>
+                <p className="mt-0.5 text-[10px]" style={{ color: "oklch(0.58 0.04 240)" }}>
+                  Mon – Sat · 8 AM – 9 PM
+                </p>
+              </div>
               <a
                 href={phoneHref}
-                className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-xl py-2 text-xs font-bold text-white transition-all duration-300 hover:scale-[1.02]"
+                className="inline-flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-bold text-white transition-all duration-300 active:scale-95"
                 style={{
                   background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT2})`,
                   boxShadow: `0 0 12px oklch(0.55 0.18 250 / 0.30)`,
@@ -317,34 +333,35 @@ export default function Footer() {
         className="border-t"
         style={{ borderColor: "oklch(0.65 0.18 210 / 0.10)" }}
       >
-        <div className="mx-auto max-w-7xl px-5 py-5 sm:px-8 lg:px-14">
-          <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
+        <div className="mx-auto max-w-7xl px-4 py-5 sm:px-8 lg:px-14">
+          <div className="flex flex-col items-center gap-3 text-center sm:flex-row sm:justify-between sm:text-left">
 
             {/* Copyright */}
-            <p className="text-[11px]" style={{ color: "oklch(0.42 0.03 240)" }}>
-              © {year} <span className="font-semibold" style={{ color: "oklch(0.55 0.04 240)" }}>{business.name}</span>. All rights reserved. Built with ❄️ in Jharkhand, India.
+            <p className="text-[11px] leading-5" style={{ color: "oklch(0.42 0.03 240)" }}>
+              © {year}{" "}
+              <span className="font-semibold" style={{ color: "oklch(0.55 0.04 240)" }}>
+                {business.name}
+              </span>
+              . All rights reserved.{" "}
+              <span className="hidden sm:inline">Built with ❄️ in Jharkhand, India.</span>
             </p>
 
-            {/* Legal quick links */}
-            <div className="flex items-center gap-5">
-              {legalLinks.slice(0, 3).map((l, i) => (
-                <span key={l.label} className="flex items-center gap-5">
-                  {i > 0 && (
-                    <span className="h-3 w-px" style={{ background: "oklch(0.98 0 0 / 0.08)" }} />
-                  )}
-                  <Link
-                    href={l.href}
-                    className="text-[11px] transition-colors hover:text-white"
-                    style={{ color: "oklch(0.42 0.03 240)" }}
-                  >
-                    {l.label}
-                  </Link>
-                </span>
+            {/* Legal quick links — wrap nicely on mobile */}
+            <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 sm:justify-end">
+              {legalLinks.slice(0, 3).map((l) => (
+                <Link
+                  key={l.label}
+                  href={l.href}
+                  className="text-[11px] transition-colors hover:text-white"
+                  style={{ color: "oklch(0.42 0.03 240)" }}
+                >
+                  {l.label}
+                </Link>
               ))}
             </div>
 
-            {/* Made with love */}
-            <p className="text-[11px]" style={{ color: "oklch(0.38 0.03 240)" }}>
+            {/* Powered by */}
+            <p className="text-[11px] shrink-0" style={{ color: "oklch(0.38 0.03 240)" }}>
               Powered by{" "}
               <span
                 className="font-semibold bg-clip-text text-transparent"

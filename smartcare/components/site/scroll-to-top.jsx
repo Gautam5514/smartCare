@@ -1,39 +1,61 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowUp } from "lucide-react";
 
+// SVG circle math — computed once, never changes
+const SIZE = 56;
+const STROKE = 3;
+const RADIUS = (SIZE - STROKE * 2) / 2;
+const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
+
 export default function ScrollToTop() {
-  const [scrollProgress, setScrollProgress] = useState(0); // 0–100
   const [visible, setVisible] = useState(false);
+  // Ref to the progress ring circle — we mutate it directly, no re-render needed
+  const ringRef = useRef(null);
+  const rafRef = useRef(null);
 
   useEffect(() => {
-    function handleScroll() {
+    function update() {
       const scrollTop = window.scrollY;
-      const docHeight =
-        document.documentElement.scrollHeight - window.innerHeight;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = docHeight > 0 ? scrollTop / docHeight : 0; // 0–1
 
-      const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
-      setScrollProgress(progress);
-      setVisible(scrollTop > 120);
+      // Update ring directly via DOM — zero React re-render
+      if (ringRef.current) {
+        ringRef.current.style.strokeDashoffset =
+          CIRCUMFERENCE - progress * CIRCUMFERENCE;
+      }
+
+      // Only flip visible state when crossing threshold (rare → cheap)
+      setVisible((prev) => {
+        const shouldShow = scrollTop > 150;
+        return prev === shouldShow ? prev : shouldShow;
+      });
+
+      rafRef.current = null;
     }
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll(); // init on mount
-    return () => window.removeEventListener("scroll", handleScroll);
+    function onScroll() {
+      // Throttle: fire update at most once per animation frame
+      if (!rafRef.current) {
+        rafRef.current = requestAnimationFrame(update);
+      }
+    }
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    update(); // init on mount
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
   }, []);
 
   function scrollToTop() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
-
-  // SVG circle math
-  const size = 56;          // total button size in px
-  const strokeWidth = 3;
-  const radius = (size - strokeWidth * 2) / 2; // inner radius
-  const circumference = 2 * Math.PI * radius;
-  const strokeDashoffset = circumference - (scrollProgress / 100) * circumference;
 
   return (
     <AnimatePresence>
@@ -42,47 +64,48 @@ export default function ScrollToTop() {
           key="scroll-to-top"
           onClick={scrollToTop}
           aria-label="Scroll to top"
-          initial={{ opacity: 0, scale: 0.6, y: 20 }}
+          initial={{ opacity: 0, scale: 0.5, y: 16 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.6, y: 20 }}
-          transition={{ duration: 0.35, ease: "easeOut" }}
-          whileHover={{ scale: 1.08 }}
-          whileTap={{ scale: 0.94 }}
+          exit={{ opacity: 0, scale: 0.5, y: 16 }}
+          transition={{ duration: 0.28, ease: [0.34, 1.56, 0.64, 1] }}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.92 }}
           className="fixed bottom-6 right-6 z-50 flex items-center justify-center"
-          style={{ width: size, height: size }}
+          style={{ width: SIZE, height: SIZE }}
         >
-          {/* Progress Ring SVG */}
+          {/* Progress Ring SVG — ring arc updated via ref, no re-render */}
           <svg
-            width={size}
-            height={size}
-            viewBox={`0 0 ${size} ${size}`}
+            width={SIZE}
+            height={SIZE}
+            viewBox={`0 0 ${SIZE} ${SIZE}`}
             className="absolute inset-0 -rotate-90"
             aria-hidden="true"
           >
             {/* Track ring */}
             <circle
-              cx={size / 2}
-              cy={size / 2}
-              r={radius}
+              cx={SIZE / 2}
+              cy={SIZE / 2}
+              r={RADIUS}
               fill="none"
-              stroke="oklch(0.98 0 0 / 0.12)"
-              strokeWidth={strokeWidth}
+              stroke="oklch(0.98 0 0 / 0.10)"
+              strokeWidth={STROKE}
             />
-            {/* Progress ring */}
+            {/* Progress ring — mutated directly via ringRef */}
             <circle
-              cx={size / 2}
-              cy={size / 2}
-              r={radius}
+              ref={ringRef}
+              cx={SIZE / 2}
+              cy={SIZE / 2}
+              r={RADIUS}
               fill="none"
-              stroke="url(#scrollGradient)"
-              strokeWidth={strokeWidth}
+              stroke="url(#scrollGrad)"
+              strokeWidth={STROKE}
               strokeLinecap="round"
-              strokeDasharray={circumference}
-              strokeDashoffset={strokeDashoffset}
-              style={{ transition: "stroke-dashoffset 0.15s ease" }}
+              strokeDasharray={CIRCUMFERENCE}
+              strokeDashoffset={CIRCUMFERENCE} /* starts empty */
+              style={{ transition: "stroke-dashoffset 0.12s linear" }}
             />
             <defs>
-              <linearGradient id="scrollGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id="scrollGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="oklch(0.75 0.17 200)" />
                 <stop offset="100%" stopColor="oklch(0.58 0.19 250)" />
               </linearGradient>
@@ -91,14 +114,14 @@ export default function ScrollToTop() {
 
           {/* Inner circle button */}
           <span
-            className="relative z-10 flex items-center justify-center rounded-full shadow-lg"
+            className="relative z-10 flex items-center justify-center rounded-full"
             style={{
-              width: size - strokeWidth * 2 - 6,
-              height: size - strokeWidth * 2 - 6,
+              width: SIZE - STROKE * 2 - 6,
+              height: SIZE - STROKE * 2 - 6,
               background:
                 "linear-gradient(135deg, oklch(0.58 0.19 245), oklch(0.46 0.16 262))",
               boxShadow:
-                "0 0 18px oklch(0.55 0.18 250 / 0.55), 0 4px 12px oklch(0.08 0.04 260 / 0.4)",
+                "0 0 20px oklch(0.55 0.18 250 / 0.5), 0 4px 12px oklch(0.08 0.04 260 / 0.35)",
             }}
           >
             <ArrowUp className="h-5 w-5 text-white" strokeWidth={2.5} />
